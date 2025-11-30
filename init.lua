@@ -25,6 +25,10 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		vim.highlight.on_yank()
 	end,
 })
+-- LSP Root Markers
+vim.lsp.config("*", {
+	root_markers = { ".git", "package.json" }, -- Add or remove markers as needed
+})
 
 require("lazy").setup({
 	-- Dependencies
