@@ -140,7 +140,10 @@ require("lazy").setup({
 						runtime = { version = "LuaJIT" },
 						workspace = {
 							checkThirdParty = false,
-							library = vim.api.nvim_get_runtime_file("", true),
+							library = {
+								vim.env.VIMRUNTIME, -- The base directory (fast)
+								vim.fn.stdpath("config"), -- Your config dir (fast)
+							},
 						},
 						diagnostics = {
 							globals = { "vim" },
