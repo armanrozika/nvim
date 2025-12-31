@@ -101,13 +101,27 @@ require("lazy").setup({
 					hl["@punctuation.bracket.graphql"] = { fg = c.purple }
 				end,
 				on_colors = function(colors)
-					colors.bg = "#272b41"
+					-- colors.bg = "#272b41"
 				end,
 			})
-			vim.cmd([[colorscheme tokyonight]])
 		end,
 	},
-
+	{
+		"catppuccin/nvim",
+		name = "catppuccin",
+		lazy = false,
+		priority = 1000,
+		config = function()
+			require("catppuccin").setup({
+				flavour = "latte",
+			})
+		end,
+	},
+	{
+		"webhooked/kanso.nvim",
+		lazy = false,
+		priority = 1000,
+	},
 	-- Folding
 	require("plugins.nvim-ufo"),
 
@@ -129,7 +143,7 @@ require("lazy").setup({
 		"neovim/nvim-lspconfig",
 		config = function()
 			-- These are installed using mason
-			vim.lsp.enable({ "lua_ls", "tailwindcss" })
+			vim.lsp.enable({ "lua_ls", "tailwindcss", "gopls" })
 			-- config for lua
 			vim.lsp.config("lua_ls", {
 				settings = {
@@ -164,3 +178,5 @@ require("lazy").setup({
 	-- Telescope
 	require("plugins.telescope"),
 })
+
+vim.cmd("colorscheme catppuccin")

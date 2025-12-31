@@ -9,6 +9,7 @@ return {
 				-- these (prettierd, stylua) are installed using mason
 				formatting.prettierd,
 				formatting.stylua,
+				formatting.gofumpt,
 			},
 			-- Format on save
 			on_attach = function(client, bufnr)

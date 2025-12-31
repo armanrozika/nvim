@@ -1,3 +1,23 @@
+function _G.get_custom_tabline()
+	local s = ""
+	for tabnr = 1, vim.fn.tabpagenr("$") do
+		local bufnr = vim.fn.tabpagebuflist(tabnr)[vim.fn.tabpagewinnr(tabnr)]
+		local bufname = vim.fn.bufname(bufnr)
+		-- Use fnamemodify with ":p" to get the full absolute path
+		local full_path = vim.fn.fnamemodify(bufname, ":p")
+
+		if tabnr == vim.fn.tabpagenr() then
+			-- Highlight the selected tab
+			s = s .. "%#TabLineSel#" .. " " .. tabnr .. ": " .. full_path .. " "
+		else
+			-- Highlight unselected tabs
+			s = s .. "%#TabLine#" .. " " .. tabnr .. ": " .. full_path .. " "
+		end
+	end
+	s = s .. "%#TabLineFill#"
+	return s
+end
+
 vim.wo.number = true -- Make line numbers default (default: false)
 vim.o.relativenumber = true -- Set relative numbered lines (default: false)
 vim.o.clipboard = "unnamedplus" -- Sync clipboard between OS and Neovim. (default: '')
@@ -24,6 +44,7 @@ vim.o.numberwidth = 4 -- Set number column width to 2 {default 4} (default: 4)
 vim.o.swapfile = false -- Creates a swapfile (default: true)
 vim.o.smartindent = true -- Make indenting smarter again (default: false)
 vim.o.showtabline = 2 -- Always show tabs (default: 1)
+vim.o.tabline = "%!v:lua._G.get_custom_tabline()"
 vim.o.backspace = "indent,eol,start" -- Allow backspace on (default: 'indent,eol,start')
 vim.o.pumheight = 10 -- Pop up menu height (default: 0)
 vim.o.conceallevel = 0 -- So that `` is visible in markdown files (default: 1)
