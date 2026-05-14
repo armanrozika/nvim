@@ -12,13 +12,20 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 local rtp = vim.opt.rtp
 rtp:prepend(lazypath)
-
---Disable document color, so annoying lol
-vim.api.nvim_create_autocmd("LspAttach", {
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "typescriptreact",
 	callback = function(args)
-		vim.lsp.document_color.enable(false, args.buf)
+		-- ensure html parser is loaded
+		vim.treesitter.get_parser(args.buf, "html")
+
+		-- restart treesitter so injections apply
+		vim.treesitter.stop(args.buf)
+		vim.treesitter.start(args.buf)
 	end,
 })
+
+--Disable document color, so annoying lol
+vim.lsp.document_color.enable(false)
 -- Highlight Yank
 vim.api.nvim_create_autocmd("TextYankPost", {
 	callback = function()
@@ -66,7 +73,7 @@ require("lazy").setup({
 		},
 		opts = {
 			options = {
-				theme = "tokyonight",
+				theme = "auto",
 				section_separators = "",
 				disabled_filetypes = { "alpha", "neo-tree" },
 			},
@@ -87,7 +94,7 @@ require("lazy").setup({
 		priority = 1000,
 		config = function()
 			require("tokyonight").setup({
-				style = "storm",
+				style = "day",
 				on_highlights = function(hl, c)
 					hl.Delimiter = { fg = "#eeeeee" }
 					hl["@tag.delimiter.tsx"] = { fg = "#cecece" }
@@ -101,19 +108,29 @@ require("lazy").setup({
 					hl["@punctuation.bracket.graphql"] = { fg = c.purple }
 				end,
 				on_colors = function(colors)
-					-- colors.bg = "#272b41"
+					colors.bg = "#272b41"
 				end,
 			})
 		end,
 	},
 	{
+		"navarasu/onedark.nvim",
+		priority = 1000, -- make sure to load this before all the other start plugins
+		config = function()
+			require("onedark").setup({
+				style = "light",
+			})
+			-- require("onedark").load()
+		end,
+	},
+	{
 		"catppuccin/nvim",
 		name = "catppuccin",
-		lazy = false,
+		auto_integrations = true,
 		priority = 1000,
 		config = function()
 			require("catppuccin").setup({
-				flavour = "latte",
+				flavour = "frappe",
 			})
 		end,
 	},
@@ -137,13 +154,19 @@ require("lazy").setup({
 	-- Typescript LSP & Others
 	{
 		"pmizio/typescript-tools.nvim",
-		opts = {},
+		opts = {
+			settings = {
+				tsserver_plugins = {
+					"gql.tada/ts-plugin",
+				},
+			},
+		},
 	},
 	{
 		"neovim/nvim-lspconfig",
 		config = function()
 			-- These are installed using mason
-			vim.lsp.enable({ "lua_ls", "tailwindcss", "gopls" })
+			vim.lsp.enable({ "lua_ls", "tailwindcss" })
 			-- config for lua
 			vim.lsp.config("lua_ls", {
 				settings = {
@@ -179,4 +202,4 @@ require("lazy").setup({
 	require("plugins.telescope"),
 })
 
-vim.cmd("colorscheme catppuccin")
+vim.cmd("colorscheme catppuccin-nvim")
